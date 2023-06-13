@@ -7,7 +7,9 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     </head>
     @php
-    $count = 0;
+        $count = 0;
+        $countCurr = 0;
+        $countBreak = 0 ;
     @endphp
     <body class="antialiased">
     @include('navigation')
@@ -20,15 +22,37 @@
             <tbody>
                 @php
                     $count++;
-                    $celsius = $weather['list'][$count]['main']['temp'] - 273.15;
                 @endphp
-                @for($weather['list'][$count])
-                <tr data-bs-toggle="modal" data-bs-target="#weatherModal{{$weather['city']['id']}}">
-                    <td>{{ $weather['list'][$count]['weather'][0]['main'] }}</td>
-                    <td>{{ $celsius }} °C</td>
-                    <td><img src="https://openweathermap.org/img/w/{{$weather['list'][0]['weather'][0]['icon']}}.png" alt="Weather Icon" class="img-fluid"></td>
-                </tr>
-                @endfor
+                    <tr data-bs-toggle="modal" data-bs-tsarget="#weatherModal{{$weather['city']['id']}}">
+                        @foreach($weather['list'] as $weatherCurr)
+                            @if ($countBreak >= 7)
+                                @break
+                            @endif
+                            @php
+                                $countBreak++;
+                                $celsius = $weather['list'][$countCurr]['main']['temp'] - 273.15;
+                                $date = $weather['list'][$countCurr]['dt_txt'];
+                                $dayName = date('l', strtotime($date));
+                            @endphp
+                        <td>
+                            <div>
+                                {{ $weather['list'][$countCurr]['weather'][0]['main'] }}
+                                <img src="https://openweathermap.org/img/w/{{$weather['list'][$countCurr]['weather'][0]['icon']}}.png" alt="Weather Icon" class="img-fluid"><br>
+                                Temperature {{ $celsius }} °C<br>
+                                {{$weather['list'][$countCurr]['dt_txt']}} <br>
+                                {{$dayName}}
+                            </div>
+                            @php
+                                $celsius = $weather['list'][$count]['main']['temp'] - 273.15;
+                                $countCurr++;
+                            @endphp
+                        </td>
+                        @endforeach
+                            @php
+                                $countBreak = 0;
+                                $countCurr = 0;
+                            @endphp
+                    </tr>
 
 
                 <div class="modal fade" id="weatherModal{{$weather['city']['id']}}" tabindex="-1" aria-labelledby="weatherModalLabel{{$weather['city']['id']}}" aria-hidden="true">

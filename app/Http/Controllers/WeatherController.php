@@ -33,7 +33,6 @@ class WeatherController extends Controller
                 $apiResponse = file_get_contents($apiUrl);
                 $apiData[] = json_decode($apiResponse, true);
 
-
                 $count++;
             }
         }
