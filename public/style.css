@@ -1,0 +1,5 @@
+tr div:hover {
+    border: solid #46bbcc 1px;
+    border-radius: 10px;
+    cursor: pointer;
+}

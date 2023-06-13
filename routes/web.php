@@ -15,3 +15,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [WeatherController::class, 'showWeather']);
+
+Route::get('/favorites/add', [WeatherController::class, 'addFavorite'])->name('favorites.add');
+
+Route::get('/favorites', [WeatherController::class, 'showFavorites'])->name('favorites');
+
+Route::get('/welcome', [WeatherController::class, 'showWeather'])->name('welcome');
