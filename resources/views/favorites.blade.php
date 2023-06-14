@@ -14,11 +14,6 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 </head>
-@php
-    $count = 0;
-    $countCurr = 0;
-    $countBreak = 0 ;
-@endphp
 <body class="antialiased">
     @include('navigation')
     <div class="container">
@@ -96,46 +91,6 @@
         </table>
     </div>
 
-<script>
-    $('.favorite-icon').click(function(event) {
-        event.preventDefault();
-
-        var cityId = $(this).data('city-id');
-
-        $.ajax({
-            url: '{{ route("favorites.add") }}',
-            method: 'GET',
-            data: {
-                city_id: cityId
-            },
-            success: function(response) {
-                if(response.type === "add"){
-                    $(event.target).removeClass('fa-regular fa-star').addClass('fas fa-star');
-                }else if(response.type === 'delete')
-                    $(event.target).closest('td').remove();
-                else{
-                    $(event.target).removeClass('fas fa-star').addClass('fa-regular fa-star');
-                }
-                Swal.fire({
-                    title: response.message,
-                    text: "Weather App",
-                    icon: response.icon,
-                    showConfirmButton: false
-            })
-            },
-            error: function(xhr) {
-                Swal.fire({
-                    title: xhr.responseJSON.message,
-                    text: "Weather App",
-                    icon: "warning",
-                    showConfirmButton: false
-                })
-            }
-        });
-    });
-
-
-</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 

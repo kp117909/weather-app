@@ -12,79 +12,104 @@ class WeatherController extends Controller
 {
     public function showWeather()
     {
-
         $data = file_get_contents('C:\Users\kpola\PhpstormProjects\cityList.json');
-
         $weatherData = json_decode($data, true);
 
-        $apiKey = 'bdad5cfd1ab8a2389236eb82d988d992';
-        $apiData = [];
-
-        $count = 0;
-
-        $client = new Client();
-
-        foreach ($weatherData as $data) {
-            if ($count >= 100) {
-                break;
-            }
-
-            if (isset($data['coord']['lon']) && isset($data['coord']['lat'])) {
-                $lat = $data['coord']['lat'];
-                $lon = $data['coord']['lon'];
-
-                $apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
-
-                $response = $client->request('GET', $apiUrl, [
-                    'query' => [
-                        'lat' => $lat,
-                        'lon' => $lon,
-                        'appid' => $apiKey,
-                        'units' => 'metric'
-                    ]
-                ]);
-
-                $apiData[] = json_decode($response->getBody(), true);
-
-                $count++;
+        $filteredWeatherData = [];
+        foreach ($weatherData as $weather) {
+            if ($weather['country'] === 'PL') {
+                $filteredWeatherData[] = $weather;
             }
         }
-
         $fav = Favorite::pluck('city_id')->all();
-
-        return view('welcome', compact('apiData'  , 'fav'));
-    }
-
-    public function showFavorites($optional = null)
-    {
-        $data = file_get_contents('C:\Users\kpola\PhpstormProjects\cityList.json');
-
-        $weatherData = json_decode($data, true);
+        $weatherData = $filteredWeatherData;
+        $client = new Client();
 
         $apiKey = 'bdad5cfd1ab8a2389236eb82d988d992';
         $apiData = [];
 
-        $count = 0;
-        $fav = Favorite::pluck('city_id')->all();
-        foreach ($weatherData as $data) {
-            if ($count >= 50) {
-                break;
-            }
+        foreach ($filteredWeatherData as $data) {
             if (in_array($data['id'], $fav)){
                 if (isset($data['coord']['lon']) && isset($data['coord']['lat'])) {
                     $lat = $data['coord']['lat'];
                     $lon = $data['coord']['lon'];
 
-                    $apiUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&appid=$apiKey";
-                    $apiResponse = file_get_contents($apiUrl);
-                    $apiData[] = json_decode($apiResponse, true);
+                    $apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
+                    $response = $client->request('GET', $apiUrl, [
+                        'query' => [
+                            'lat' => $lat,
+                            'lon' => $lon,
+                            'appid' => $apiKey,
+                            'units' => 'metric'
+                        ]
+                    ]);
+                    $apiData[] = json_decode($response->getBody(), true);
+                }
+            }
+        }
+        return view('welcome', compact('weatherData'  , 'fav', 'apiData'));
+    }
 
-                    $count++;
+    public function showFavorites($optional = null)
+    {
+        $data = file_get_contents('C:\Users\kpola\PhpstormProjects\cityList.json');
+        $weatherData = json_decode($data, true);
+
+        $fav = Favorite::pluck('city_id')->all();
+
+        $client = new Client();
+
+        $apiKey = 'bdad5cfd1ab8a2389236eb82d988d992';
+        $apiData = [];
+
+        foreach ($weatherData as $data) {
+            if (in_array($data['id'], $fav)){
+                if (isset($data['coord']['lon']) && isset($data['coord']['lat'])) {
+                    $lat = $data['coord']['lat'];
+                    $lon = $data['coord']['lon'];
+
+                    $apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
+                    $response = $client->request('GET', $apiUrl, [
+                        'query' => [
+                            'lat' => $lat,
+                            'lon' => $lon,
+                            'appid' => $apiKey,
+                            'units' => 'metric'
+                        ]
+                    ]);
+                    $apiData[] = json_decode($response->getBody(), true);
                 }
             }
         }
 
         return view('favorites', compact('apiData'));
+    }
+
+    public function getCurrentCity(Request $request)
+    {
+        $selectedId = $request->input('selectedId');
+        $lon = $request->input('lon');
+        $lat = $request->input('lat');
+
+        $client = new Client();
+
+        $apiKey = 'bdad5cfd1ab8a2389236eb82d988d992';
+        $apiData = [];
+
+        if (isset($lon) && isset($lat)) {
+            $apiUrl = "https://api.openweathermap.org/data/2.5/forecast";
+            $response = $client->request('GET', $apiUrl, [
+                'query' => [
+                    'lat' => $lat,
+                    'lon' => $lon,
+                    'appid' => $apiKey,
+                    'units' => 'metric'
+                ]
+            ]);
+            $apiData[] = json_decode($response->getBody(), true);
+        }
+
+        return response()->json($apiData);
     }
 
     public function addFavorite(Request $request)

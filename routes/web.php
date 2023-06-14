@@ -21,3 +21,5 @@ Route::get('/favorites/add', [WeatherController::class, 'addFavorite'])->name('f
 Route::get('/favorites', [WeatherController::class, 'showFavorites'])->name('favorites');
 
 Route::get('/welcome', [WeatherController::class, 'showWeather'])->name('welcome');
+
+Route::get('/getCurrentCity', [WeatherController::class, 'getCurrentCity'])->name('getCurrentCity');
