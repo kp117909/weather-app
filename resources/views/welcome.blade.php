@@ -40,25 +40,24 @@
             <table id = "tableMain" class="table">
                 <thead>
                 </thead>
-                <tbody>
-                <tr>
-                    @php
-                        $count = 0;
-                    @endphp
+                <tbody id="weather-table">
+                <tr id = "weather-row">
                     @foreach($apiData as $weather)
                         @php
-                            $count++;
                             $date = $weather['list'][0]['dt_txt'];
                             $dayName = date('l', strtotime($date));
                         @endphp
-                        <td>
+                        <td class="weather-cell">
                             <h2 class="center">
                                 {{ $weather['city']['name'] }}
-                                <a href="#" class="favorite-icon" data-city-id="{{ $weather['city']['id'] }}">
-                                    <i class="fas fa-star"></i>
+                                <a href="#" class="favorite-icon"  data-bs-toggle="tooltip" title="Delete" data-bs-placement="top" data-city-id="{{ $weather['city']['id'] }}">
+                                    <i class="fa-solid fa-delete-left"></i>
+                                </a>
+                                <a href="#" class="charts" data-bs-toggle="modal"  data-bs-target="#weatherModal{{$weather['city']['id']}}">
+                                    <i class="fa-solid fa-chart-line"></i>
                                 </a>
                             </h2>
-                            <div data-bs-toggle="modal" data-bs-target="#weatherModal{{$weather['city']['id']}}">
+                            <div>
                                 {{ $weather['list'][0]['weather'][0]['main'] }}
                                 <img src="https://openweathermap.org/img/w/{{$weather['list'][0]['weather'][0]['icon']}}.png" alt="Weather Icon" class="img-fluid"><br>
                                 Temperature {{ $weather['list'][0]['main']['temp'] }} °C<br>
@@ -66,9 +65,6 @@
                                 {{ $dayName }}
                             </div>
                         </td>
-                        @if ($count % 5 == 0)
-                            </tr><tr>
-                        @endif
                     @endforeach
                 </tr>
 
@@ -125,7 +121,16 @@
 
 
         <script>
+            $(window).on('resize', function() {
+                initializeChosenSelect();
+            });
+
+            function initializeChosenSelect() {
+                $('.chosen-select').chosen();
+            }
+
             $(document).ready(function() {
+                window.addEventListener('load', rearrangeCells);
                 $('.chosen-select').chosen();
 
                 $('#getCoordinatesButton').click(function() {
@@ -229,9 +234,9 @@
                 });
             });
 
+            // Remove from favorite
             $('.favorite-icon').click(function(event) {
                 event.preventDefault();
-
                 var cityId = $(this).data('city-id');
 
                 $.ajax({
@@ -241,13 +246,9 @@
                         city_id: cityId
                     },
                     success: function(response) {
-
-                        if(response.type === "add"){
-                            $(event.target).removeClass('fa-regular fa-star').addClass('fas fa-star');
-                        }else if(response.type === 'delete')
+                        if (response.type === 'delete'){
                             $(event.target).closest('td').remove();
-                        else{
-                            $(event.target).removeClass('fas fa-star').addClass('fa-regular fa-star');
+                            rearrangeCells();
                         }
                         Swal.fire({
                             title: response.message,
@@ -267,11 +268,47 @@
                 });
             });
 
+            function rearrangeCells() {
+                var screenWidth = document.documentElement.clientWidth || document.body.clientWidth;
+                var maxCellsPerRow = 5;
+
+                if (screenWidth <= 200) {
+                  maxCellsPerRow =  1;
+                } else if (screenWidth <= 500) {
+                    maxCellsPerRow = 2;
+                } else if (screenWidth <= 900) {
+                    maxCellsPerRow = 3;
+                }
+
+                var $weatherTable = document.getElementById('weather-table');
+                var $weatherCells = Array.from($weatherTable.querySelectorAll('.weather-cell'));
+
+                $weatherTable.innerHTML = '';
+
+                for (var i = 0; i < $weatherCells.length; i += maxCellsPerRow) {
+                    var $row = document.createElement('tr');
+                    var cells = $weatherCells.slice(i, i + maxCellsPerRow);
+
+                    cells.forEach(function(cell) {
+                        $row.appendChild(cell);
+                    });
+
+                    $weatherTable.appendChild($row);
+                }
+            }
+
+            window.addEventListener('DOMContentLoaded', rearrangeCells);
+            window.addEventListener('resize', rearrangeCells);
+            window.addEventListener('load', rearrangeCells);
         </script>
+    </div>
+
+    <div class="footer">
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Charts
         var modals = document.querySelectorAll('.modal.fav');
         var weatherData = {!! json_encode($favData) !!};
 
@@ -369,11 +406,15 @@
         });
     </script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+
+
 
     </body>
 </html>

@@ -1,5 +1,15 @@
-tr div:hover {
-    border: solid #46bbcc 1px;
-    border-radius: 10px;
-    cursor: pointer;
+
+.favorite-icon i {
+    margin-right: 10px;
 }
+
+i:hover{
+    color:slategray;
+}
+
+.footer {
+    margin-top:10px;
+    height: 50px;
+}
+
+
