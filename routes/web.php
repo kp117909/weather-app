@@ -18,6 +18,8 @@ Route::get('/', [WeatherController::class, 'showWeather']);
 
 Route::get('/favorites/add', [WeatherController::class, 'addFavorite'])->name('favorites.add');
 
+Route::get('/favorites/addToSql', [WeatherController::class, 'saveFavoriteToSql'])->name('favorites.addToSql');
+
 Route::get('/favorites', [WeatherController::class, 'showFavorites'])->name('favorites');
 
 Route::get('/welcome', [WeatherController::class, 'showWeather'])->name('welcome');
