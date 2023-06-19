@@ -26,7 +26,7 @@
             <div class="row p-3">
                 <div class="col-md-12">
                     <div class="input-group mb-3">
-                        <select id="weatherSelect" class="form-select chosen-select" aria-label="Select Weather">
+                        <select id="weatherSelect" class="form-select chosen-select" aria-label="{{__('Select Weather')}}">
                         <option value="none" selected disabled>{{__('Select Weather')}}</option>
                             @foreach($weatherData as $weather)
                                 <option value="{{ $weather['id'] }}" data-lon="{{ $weather['coord']['lon'] }}" data-lat="{{ $weather['coord']['lat'] }}">{{ $weather['name'] }} [{{$weather['coord']['lat']}}, {{$weather['coord']['lon']}}]</option>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div>
-                    <button id="getCoordinatesButton" data-url="{{ route('getCurrentCity') }}" class="btn btn-primary">Get Data From Api Here</button>
+                    <button id="getCoordinatesButton" data-url="{{ route('getCurrentCity') }}" class="btn btn-primary">{{__('Get Data From Api Here')}}</button>
                 </div>
             </div>
 
@@ -72,7 +72,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="weatherModalLabel{{ $weather['city']['id'] }}">{{ $weather['city']['name'] }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{__('Close')}}"></button>
                                 </div>
                                 <div class="modal-body">
                                     <p> {{__('Main Weather:')}} {{ $weather['list'][0]['weather'][0]['main'] }}</p>
@@ -89,8 +89,6 @@
                     </div>
                 @endforeach
             </div>
-
-            <button type="button" data-url = "{{ route("favorites.addToSql") }}" id = "addFavToSql" class="btn btn-secondary">{{__('Add Fav to Sql | // DEV')}}  <i class="fas fa-star"></i> </button>
         </div>
 
         <div class="modal fade" id="weatherModal" tabindex="-1" aria-labelledby="weatherModalLa bel" aria-hidden="true">
@@ -98,7 +96,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="weatherModalLabel">{{__('Weather Data')}}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{__('Close')}}"></button>
                     </div>
                     <div class="modal-body">
                         <p><strong>{{__('ID:')}}</strong> <span id="modalId"></span></p>
@@ -132,9 +130,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
-
-    @vite(['resources/js/app.js'])
-
 
     </body>
 </html>
