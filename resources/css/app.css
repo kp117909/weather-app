@@ -1,4 +1,18 @@
-tr:hover {
-    background-color: #b81c1c;
-    cursor: pointer;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.remove-from-fav i {
+    margin-right: 10px;
 }
+
+i:hover{
+    color:gray;
+}
+
+.footer {
+    margin-top:10px;
+    height: 50px;
+}
+
+
